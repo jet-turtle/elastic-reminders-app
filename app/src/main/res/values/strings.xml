@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Reminders</string>
+    <string name="elastic">elastic</string>
+    <string name="set_notification">Set notification</string>
+    <string name="title">title</string>
+    <string name="message">message</string>
+    <string name="duration">duration</string>
+    <string name="minutes">Minutes</string>
+    <string name="hours">Hours</string>
+    <string name="days">Days</string>
+    <string name="single">Single</string>
+    <string name="periodic">Periodic</string>
+    <string name="start">Start</string>
+    <string name="cancel">Cancel</string>
+    <string name="approx_sign">\u2248\u00A0</string>
+</resources>
