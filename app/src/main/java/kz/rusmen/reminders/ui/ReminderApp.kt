@@ -45,7 +45,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -162,6 +164,22 @@ fun ReminderApp(
     }
 }
 
+@Preview
+@Composable
+fun ActiveReminderItemPreview() {
+    ActiveReminderItem(
+        reminder = ReminderUiState(
+            title = "Тренировки",
+            message = "Ура! Завтра - тренировка.",
+            duration = "14",
+            timeType = TimeType.DAYS,
+            isPeriodic = false,
+            status = "ENQUEUED"
+        ),
+        onCancel = {}
+    )
+}
+
 @Composable
 fun ActiveReminderItem(
     reminder: ReminderUiState,
@@ -173,8 +191,16 @@ fun ActiveReminderItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Text(text = reminder.title, fontWeight = FontWeight.Bold)
+                Text(
+                    text = reminder.message,
+                    maxLines = 14,
+                    overflow = TextOverflow.Ellipsis,
+                )
                 Text(
                     text = if (reminder.isPeriodic) "Periodic" else "Single" + " - " + reminder.duration + " " + reminder.timeType.title,
                     style = MaterialTheme.typography.bodySmall
