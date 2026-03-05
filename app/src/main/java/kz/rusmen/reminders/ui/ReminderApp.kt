@@ -173,7 +173,7 @@ fun ActiveReminderItemPreview() {
             message = "Ура! Завтра - тренировка.",
             duration = "14",
             timeType = TimeType.DAYS,
-            isPeriodic = false,
+            isPeriodic = true,
             status = "ENQUEUED"
         ),
         onCancel = {}
@@ -202,7 +202,11 @@ fun ActiveReminderItem(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = if (reminder.isPeriodic) "Periodic" else "Single" + " - " + reminder.duration + " " + reminder.timeType.title,
+                    text = if (reminder.isPeriodic) {
+                        "Periodic" + " - " + reminder.duration + " " + reminder.timeType.title
+                    } else {
+                        "Single" + " - " + reminder.duration + " " + reminder.timeType.title
+                    },
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
@@ -222,6 +226,7 @@ fun ActiveReminderItem(
         }
     }
 }
+// if (reminder.isPeriodic) "Periodic" else "Single" + " - " + reminder.duration + " " + reminder.timeType.title
 
 @Composable
 fun ReminderCard(
