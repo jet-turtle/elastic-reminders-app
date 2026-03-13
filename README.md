@@ -38,4 +38,4 @@ The app follows a clean separation of concerns:
 📸 Screenshots
 | Main Screen | Create Reminder |
 | :---: | :---: |
-| ![Main](images/reminders_300.jpg) | ![Create](images/reminders_2_300.jpg) |
+| ![Main](images/reminders_2_300.jpg) | ![Create](images/reminders_300.jpg) |
