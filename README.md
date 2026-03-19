@@ -36,6 +36,7 @@ The app follows a clean separation of concerns:
     Ui Layer: Reactive UI built with Jetpack Compose and ViewModel.
 
 📸 Screenshots
-| Main Screen | Create Reminder |
+
+| Light Theme | Dark Theme |
 | :---: | :---: |
-| ![Main](images/reminders_2_300.jpg) | ![Create](images/reminders_300.jpg) |
+| ![Light](screenshots/r1.jpg) | ![Dark](screenshots/r2.jpg) |
