@@ -11,6 +11,7 @@
     <color name="google_blue">#FF4285F4</color>
     <color name="google_red">#FFEA4335</color>
     <color name="google_yellow">#FFFBBC05</color>
+    <color name="orange">#FF9800</color>
     <color name="google_green">#FF34A853</color>
     <color name="background">#FDEFE4</color>
 </resources>

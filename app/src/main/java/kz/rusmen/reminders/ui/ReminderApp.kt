@@ -1,5 +1,7 @@
 package kz.rusmen.reminders.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,12 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -27,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -38,15 +44,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -59,23 +61,6 @@ fun RemindersTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier
 ) {
-    val googleBlue = colorResource(R.color.google_blue)
-    val googleRed = colorResource(R.color.google_red)
-    val googleYellow = colorResource(R.color.google_yellow)
-    val googleGreen = colorResource(R.color.google_green)
-
-    val logoText = buildAnnotatedString {
-        withStyle(style = SpanStyle(color = googleBlue)) { append("R") }
-        withStyle(style = SpanStyle(color = googleRed)) { append("e") }
-        withStyle(style = SpanStyle(color = googleYellow)) { append("m") }
-        withStyle(style = SpanStyle(color = googleBlue)) { append("i") }
-        withStyle(style = SpanStyle(color = googleRed)) { append("n") }
-        withStyle(style = SpanStyle(color = googleBlue)) { append("d") }
-        withStyle(style = SpanStyle(color = googleBlue)) { append("e") }
-        withStyle(style = SpanStyle(color = googleGreen)) { append("r") }
-        withStyle(style = SpanStyle(color = googleRed)) { append("s") }
-    }
-
     val alpha = 1f - scrollBehavior.state.collapsedFraction
 
     CenterAlignedTopAppBar(
@@ -89,11 +74,12 @@ fun RemindersTopAppBar(
             ) {
                 Text(
                     text = stringResource(R.string.elastic),
-                    color = googleGreen,
+                    color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = logoText,
+                    text = stringResource(R.string.app_name),
+                    color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.offset(y = (-6).dp),
                     style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold)
                 )
@@ -103,11 +89,12 @@ fun RemindersTopAppBar(
             elevation = if (scrollBehavior.state.contentOffset < 0f && alpha > 0.1f) 8.dp else 0.dp
         ),
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = colorResource(R.color.background)
+            containerColor = MaterialTheme.colorScheme.background
         )
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderApp(
@@ -115,12 +102,12 @@ fun ReminderApp(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by reminderViewModel.uiState.collectAsStateWithLifecycle()
-    val allreminders by reminderViewModel.allReminders.collectAsStateWithLifecycle()
+    val allReminders by reminderViewModel.allReminders.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { RemindersTopAppBar(scrollBehavior = scrollBehavior) },
-        containerColor = colorResource(R.color.background)
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.padding(innerPadding)
@@ -154,7 +141,7 @@ fun ReminderApp(
                 )
             }
 
-            items(allreminders) { reminder ->
+            items(allReminders) { reminder ->
                 ActiveReminderItem(
                     reminder = reminder,
                     onCancel = { reminderViewModel.cancelReminder(reminder) }
@@ -164,6 +151,7 @@ fun ReminderApp(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun ActiveReminderItemPreview() {
@@ -174,7 +162,8 @@ fun ActiveReminderItemPreview() {
             duration = "14",
             timeType = TimeType.DAYS,
             isPeriodic = true,
-            status = "ENQUEUED"
+            status = "ENQUEUED",
+            createdAt = 123456789
         ),
         onCancel = {}
     )
@@ -185,22 +174,49 @@ fun ActiveReminderItem(
     reminder: ReminderUiState,
     onCancel: (ReminderUiState) -> Unit
 ) {
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 16.dp)) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp, horizontal = 16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = reminder.title, fontWeight = FontWeight.Bold)
+                Text(
+                    text = reminder.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
                 Text(
                     text = reminder.message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 14,
-                    overflow = TextOverflow.Ellipsis,
+                    overflow = TextOverflow.Ellipsis
                 )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = reminder.formattedDate,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
                 Text(
                     text = if (reminder.isPeriodic) {
                         "Periodic" + " - " + reminder.duration + " " + reminder.timeType.title
@@ -209,24 +225,44 @@ fun ActiveReminderItem(
                     },
                     style = MaterialTheme.typography.bodySmall
                 )
-                Text(
-                    text = "Status: ${reminder.status}",
-                    color = when(reminder.status) {
-                        "ENQUEUED" -> Color.Blue
-                        "SUCCEEDED" -> colorResource(R.color.green)
-                        "RUNNING" -> Color.Magenta
-                        else -> Color.Gray
-                    },
-                    style = MaterialTheme.typography.labelSmall
-                )
+                StatusBadge(status = reminder.status)
             }
             IconButton(onClick = { onCancel(reminder) }) {
-                Icon(Icons.Default.Delete, contentDescription = "Cancel")
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Cancel",
+                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                )
             }
         }
     }
 }
-// if (reminder.isPeriodic) "Periodic" else "Single" + " - " + reminder.duration + " " + reminder.timeType.title
+
+@Composable
+fun StatusBadge(status: String, modifier: Modifier = Modifier) {
+    // Определяем основной цвет для каждого статуса
+    val statusColor = when (status) {
+        "ENQUEUED" -> Color(0xFF2196F3) // Насыщенный синий
+        "RUNNING" -> Color(0xFF9C27B0)  // Пурпурный
+        "SUCCEEDED" -> Color(0xFF4CAF50) // Зеленый
+        "FAILED" -> Color(0xFFF44336)    // Красный
+        else -> Color.Gray
+    }
+
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        color = statusColor.copy(alpha = 0.12f), // Бледный фон
+        modifier = modifier.padding(top = 4.dp)
+    ) {
+        Text(
+            text = status,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+            style = MaterialTheme.typography.labelMedium,
+            color = statusColor, // Яркий текст на бледном фоне
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
 
 @Composable
 fun ReminderCard(
@@ -243,7 +279,7 @@ fun ReminderCard(
         modifier = modifier
             .padding(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFFF8F6)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
