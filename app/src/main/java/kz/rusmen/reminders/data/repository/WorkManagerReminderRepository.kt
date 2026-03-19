@@ -14,7 +14,7 @@ import kz.rusmen.reminders.data.entity.Reminder
 import kz.rusmen.reminders.worker.ReminderWorker
 import java.util.concurrent.TimeUnit
 
-class WorkManagerReminderRepository(context: Context) : ReminderRepository {
+class WorkManagerReminderRepository(context: Context) : ReminderWorkerRepository {
     private val workManager = WorkManager.getInstance(context)
 
     override fun getWorkInfo(id: Int): Flow<WorkInfo?> {
@@ -24,7 +24,12 @@ class WorkManagerReminderRepository(context: Context) : ReminderRepository {
 
     override fun scheduleReminder(reminder: Reminder) {
         val duration = reminder.duration
-        val timeUnit = TimeUnit.valueOf(reminder.timeUnit)
+        //val timeUnit = TimeUnit.valueOf(reminder.timeUnit)
+        val timeUnit = try {
+            TimeUnit.valueOf(reminder.timeUnit.uppercase())
+        } catch (e: Exception) {
+            TimeUnit.MINUTES
+        }
         val uniqueName = "reminder_${reminder.id}"
 
         val workData = workDataOf(

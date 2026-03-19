@@ -1,5 +1,7 @@
 package kz.rusmen.reminders.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -20,23 +22,24 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kz.rusmen.reminders.ReminderApplication
 import kz.rusmen.reminders.data.repository.ReminderDbRepository
-import kz.rusmen.reminders.data.repository.ReminderRepository
+import kz.rusmen.reminders.data.repository.ReminderWorkerRepository
 
 class ReminderViewModel(
-    private val reminderRepository: ReminderRepository,
+    private val reminderWorkerRepository: ReminderWorkerRepository,
     private val reminderDbRepository: ReminderDbRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReminderUiState())
     val uiState = _uiState.asStateFlow()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalCoroutinesApi::class)
     val allReminders: StateFlow<List<ReminderUiState>> = reminderDbRepository.getAllRemindersStream()
         .flatMapLatest { reminders ->
             if (reminders.isEmpty()) return@flatMapLatest flowOf(emptyList())
 
             val flows = reminders.map { reminder ->
-                reminderRepository.getWorkInfo(reminder.id).map { workInfo ->
+                reminderWorkerRepository.getWorkInfo(reminder.id).map { workInfo ->
                     reminder.toReminderUiState().copy(
                         status = workInfo?.state?.name ?: "UNKNOWN"
                     )
@@ -75,18 +78,19 @@ class ReminderViewModel(
 
     fun scheduleReminder(reminderUiState: ReminderUiState) {
         viewModelScope.launch {
-            val reminder = reminderUiState.toReminder()
+            val now = System.currentTimeMillis()
+            val reminder = reminderUiState.copy(createdAt = now).toReminder()
             val generatedId = reminderDbRepository.insertReminder(reminder)
             val finalReminder = reminder.copy(id = generatedId.toInt())
 
-            reminderRepository.scheduleReminder(finalReminder)
+            reminderWorkerRepository.scheduleReminder(finalReminder)
             _uiState.update { ReminderUiState() }
         }
     }
 
     fun cancelReminder(reminderUiState: ReminderUiState) {
         viewModelScope.launch {
-            reminderRepository.cancelReminder("reminder_${reminderUiState.id}")
+            reminderWorkerRepository.cancelReminder("reminder_${reminderUiState.id}")
             reminderDbRepository.deleteReminderById(reminderUiState.id)
         }
     }
@@ -95,11 +99,11 @@ class ReminderViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as ReminderApplication)
-                val reminderRepository = application.container.reminderRepository
+                val reminderWorkerRepository = application.container.reminderWorkerRepository
                 val reminderDbRepository = application.container.reminderDbRepository
 
                 ReminderViewModel(
-                    reminderRepository = reminderRepository,
+                    reminderWorkerRepository = reminderWorkerRepository,
                     reminderDbRepository = reminderDbRepository
                 )
             }
