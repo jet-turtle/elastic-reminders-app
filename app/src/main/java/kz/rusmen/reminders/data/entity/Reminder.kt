@@ -1,5 +1,6 @@
 package kz.rusmen.reminders.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,6 +11,10 @@ data class Reminder(
     val title: String,
     val message: String,
     val duration: Long,
+    @ColumnInfo(name = "time_unit")
     val timeUnit: String, // MINUTES, HOURS, etc.
-    val isPeriodic: Boolean
+    @ColumnInfo(name = "is_periodic")
+    val isPeriodic: Boolean,
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long
 )

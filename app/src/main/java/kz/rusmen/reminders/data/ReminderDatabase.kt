@@ -11,7 +11,7 @@ import kz.rusmen.reminders.data.entity.Reminder
     entities = [
         Reminder::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class ReminderDatabase : RoomDatabase() {
@@ -30,7 +30,7 @@ abstract class ReminderDatabase : RoomDatabase() {
                     "reminder_database"
                 )
                     //.createFromAsset("reminder.db")
-                    //.fallbackToDestructiveMigration(dropAllTables = true)
+                    .fallbackToDestructiveMigration(true)
                     .build()
                     .also { Instance = it }
             }
