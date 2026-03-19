@@ -19,16 +19,16 @@ package kz.rusmen.reminders.data
 import android.content.Context
 import kz.rusmen.reminders.data.repository.OfflineReminderDbRepository
 import kz.rusmen.reminders.data.repository.ReminderDbRepository
-import kz.rusmen.reminders.data.repository.ReminderRepository
+import kz.rusmen.reminders.data.repository.ReminderWorkerRepository
 import kz.rusmen.reminders.data.repository.WorkManagerReminderRepository
 
 interface AppContainer {
-    val reminderRepository : ReminderRepository
+    val reminderWorkerRepository : ReminderWorkerRepository
     val reminderDbRepository : ReminderDbRepository
 }
 
 class DefaultAppContainer(context: Context) : AppContainer {
-    override val reminderRepository = WorkManagerReminderRepository(context)
+    override val reminderWorkerRepository = WorkManagerReminderRepository(context)
 
     override val reminderDbRepository: ReminderDbRepository by lazy {
         OfflineReminderDbRepository(ReminderDatabase.getDatabase(context).reminderDao())
