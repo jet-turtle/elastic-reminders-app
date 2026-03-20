@@ -46,6 +46,6 @@ The project is organized into clear functional layers:
 ---
 
 ## 🚀 Getting Started
-1. Download the APK from the [Releases](https://github.com/jet-turtle/reminders-app/releases) section.
+1. Download the APK from the [Releases](https://github.com/jet-turtle/elastic-reminders-app/releases) section.
 2. Install it on your Android device (ensure "Install from Unknown Sources" is enabled).
 3. Set your first elastic reminder!
