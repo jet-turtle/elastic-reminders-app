@@ -1,42 +1,51 @@
-Elastic Reminders ⏰
+# Elastic Reminders ⏰
 
-Description:
-A modern Android application for task management with smart, flexible reminders. Built using Clean Architecture to ensure a scalable and maintainable codebase.
+A modern Android application for task management with smart, flexible reminders. Built with a focus on reliability and a clean, reactive UI.
 
-🛠 Tech Stack
+## 📥 Download
+[🚀 Download Latest APK](https://github.com/jet-turtle/elastic-reminders-app/releases/latest)
 
-    Language: Kotlin
+---
 
-    Architecture: Clean Architecture (MVVM)
+## ✨ Key Features
+* **Custom Reminders**: Create tasks with detailed titles, descriptions, and precise timing.
+* **Flexible Scheduling**: Set one-time or periodic reminders (intervals in minutes, hours, or days).
+* **Reliable Delivery**: Powered by **WorkManager** to ensure reminders trigger even after device reboots.
+* **Offline-First**: All data is stored locally using **Room**, ensuring 100% availability.
 
-    UI: Jetpack Compose
+## 🛠 Tech Stack
+* **Language**: Kotlin
+* **UI**: Jetpack Compose (Modern Declarative UI)
+* **Architecture**: MVVM (Model-View-ViewModel)
+* **Database**: Room (Local persistence)
+* **Background Tasks**: WorkManager (Job scheduling)
+* **Concurrency**: Coroutines & Flow
 
-    Data: Room Database
+## 🏗 Project Structure
+The project is organized into clear functional layers:
+* **Data**: Handles local storage (Room, DAO, Entities) and the Repository implementation.
+* **UI**: Contains Compose screen, ViewModel, and UI state management.
+* **Worker**: Manages background execution and notification delivery via WorkManager.
 
-    Background Tasks: WorkManager
+## 📸 Screenshots
+<table>
+  <tr>
+    <th align="center">Light Theme</th>
+    <th align="center">Dark Theme</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="screenshots/r1.jpg" width="300" alt="Light Theme">
+    </td>
+    <td align="center">
+      <img src="screenshots/r2.jpg" width="300" alt="Dark Theme">
+    </td>
+  </tr>
+</table>
 
-    Concurrency: Coroutines & Flow
+---
 
-🚀 Key Features
-
-    Custom Reminders: Create reminders with titles, descriptions, and flexible timing.
-
-    Flexible Scheduling: Configure reminders as one-time or periodic (using minutes, hours, or days).
-
-    Reliable Delivery: Uses WorkManager for guaranteed background execution.
-
-    Offline-First: All data is managed locally via Room.
-
-🏗 Architecture
-
-The app follows a clean separation of concerns:
-
-    Data Layer: Contains repository interfaces and handles Room database operations.
-
-    Ui Layer: Reactive UI built with Jetpack Compose and ViewModel.
-
-📸 Screenshots
-
-| Light Theme | Dark Theme |
-| :---: | :---: |
-| ![Light](screenshots/r1.jpg) | ![Dark](screenshots/r2.jpg) |
+## 🚀 Getting Started
+1. Download the APK from the [Releases](https://github.com/jet-turtle/reminders-app/releases) section.
+2. Install it on your Android device (ensure "Install from Unknown Sources" is enabled).
+3. Set your first elastic reminder!
