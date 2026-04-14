@@ -1,9 +1,11 @@
 package kz.rusmen.reminders.data.entity
 
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+@Keep // Эта аннотация от AndroidX говорит R8: "Не трогай этот класс и его поля"
 @Entity(tableName = "reminder")
 data class Reminder(
     @PrimaryKey(autoGenerate = true)

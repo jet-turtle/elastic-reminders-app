@@ -15,15 +15,19 @@ android {
         applicationId = "kz.rusmen.reminders"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // isMinifyEnabled = true  Включает удаление неиспользуемого кода и обфускацию. Исключения прописываются в proguard-rules.pro
+            // @Keep говорит R8: "Не трогай этот класс и его поля"
+            isMinifyEnabled = true
+            // isShrinkResources = true  Включает удаление неиспользуемых ресурсов (картинки, xml)
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

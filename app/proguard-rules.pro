@@ -19,3 +19,20 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Сохраняем все классы, помеченные аннотацией Entity
+-keep @androidx.room.Entity class * { *; }
+
+# Если вы используете специфические аннотации Room для полей
+-keepclassmembers class * {
+    @androidx.room.PrimaryKey *;
+    @androidx.room.ColumnInfo *;
+    @androidx.room.Ignore *;
+}
+
+# Сохраняем интерфейсы DAO
+-keep @androidx.room.Dao interface * { *; }
+
+-keep class * extends androidx.work.ListenableWorker { *; }
+-keepclassmembers enum * { *; }
+-keep class kz.rusmen.reminders.ui.TimeType { *; }

@@ -25,6 +25,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -35,6 +36,7 @@ import kz.rusmen.reminders.REQUEST_CODE
 import kz.rusmen.reminders.VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION
 import kz.rusmen.reminders.VERBOSE_NOTIFICATION_CHANNEL_NAME
 
+@Keep
 @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 fun makeReminderNotification(
     title: String?,

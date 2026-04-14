@@ -2,6 +2,7 @@ package kz.rusmen.reminders.worker
 
 import android.Manifest
 import android.content.Context
+import androidx.annotation.Keep
 import androidx.annotation.RequiresPermission
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.first
 import kz.rusmen.reminders.ReminderApplication
 import java.util.concurrent.TimeUnit
 
+@Keep
 class ReminderWorker(
     context: Context,
     workerParams: WorkerParameters

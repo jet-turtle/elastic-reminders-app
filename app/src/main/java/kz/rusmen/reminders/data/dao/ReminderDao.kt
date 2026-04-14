@@ -1,5 +1,6 @@
 package kz.rusmen.reminders.data.dao
 
+import androidx.annotation.Keep
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -9,6 +10,7 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import kz.rusmen.reminders.data.entity.Reminder
 
+@Keep // Эта аннотация от AndroidX говорит R8: "Не трогай этот класс и его поля"
 @Dao
 interface ReminderDao {
     @Query("SELECT * FROM reminder ORDER BY id DESC")
