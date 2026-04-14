@@ -7,7 +7,11 @@ import kz.rusmen.reminders.data.entity.Reminder
 class OfflineReminderDbRepository(private val reminderDao: ReminderDao) : ReminderDbRepository {
     override fun getAllRemindersStream(): Flow<List<Reminder>> = reminderDao.getAllReminders()
 
+    override fun getReminderByIdStream(id: Int): Flow<Reminder?> = reminderDao.getReminderById(id)
+
     override suspend fun insertReminder(reminder: Reminder): Long = reminderDao.insertReminder(reminder)
+
+    override suspend fun updateReminder(reminder: Reminder) = reminderDao.updateReminder(reminder)
 
     override suspend fun deleteReminder(reminder: Reminder) = reminderDao.deleteReminder(reminder)
 

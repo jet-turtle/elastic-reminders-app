@@ -1,10 +1,8 @@
 package kz.rusmen.reminders.data.repository
 
 import android.content.Context
-import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -23,42 +21,27 @@ class WorkManagerReminderRepository(context: Context) : ReminderWorkerRepository
     }
 
     override fun scheduleReminder(reminder: Reminder) {
-        val duration = reminder.duration
-        //val timeUnit = TimeUnit.valueOf(reminder.timeUnit)
-        val timeUnit = try {
-            TimeUnit.valueOf(reminder.timeUnit.uppercase())
-        } catch (e: Exception) {
-            TimeUnit.MINUTES
-        }
         val uniqueName = "reminder_${reminder.id}"
 
+        val currentTime = System.currentTimeMillis()
+        val initialDelay = (reminder.nextRunAt - currentTime).coerceAtLeast(0)
+
         val workData = workDataOf(
-            "TITLE" to reminder.title,
-            "MESSAGE" to reminder.message
+            "ID" to reminder.id,
+//            "TITLE" to reminder.title,
+//            "MESSAGE" to reminder.message
         )
 
-        if (reminder.isPeriodic) {
-            val periodicRequest = PeriodicWorkRequestBuilder<ReminderWorker>(duration, timeUnit)
-                .setInputData(workData)
-                .build()
+        val request = OneTimeWorkRequestBuilder<ReminderWorker>()
+            .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+            .setInputData(workData)
+            .build()
 
-            workManager.enqueueUniquePeriodicWork(
-                uniqueName,
-                ExistingPeriodicWorkPolicy.UPDATE,
-                periodicRequest
-            )
-        } else {
-            val oneTimeRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
-                .setInitialDelay(duration, timeUnit)
-                .setInputData(workData)
-                .build()
-
-            workManager.enqueueUniqueWork(
-                uniqueName,
-                ExistingWorkPolicy.REPLACE,
-                oneTimeRequest
-            )
-        }
+        workManager.enqueueUniqueWork(
+            uniqueName,
+            ExistingWorkPolicy.REPLACE,
+            request
+        )
     }
 
     override fun cancelReminder(reminderName: String) {

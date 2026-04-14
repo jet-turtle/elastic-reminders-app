@@ -11,7 +11,7 @@ import kz.rusmen.reminders.data.entity.Reminder
     entities = [
         Reminder::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class ReminderDatabase : RoomDatabase() {

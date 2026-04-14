@@ -212,7 +212,7 @@ fun ActiveReminderItem(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = reminder.formattedDate,
+                        text = reminder.nextRunAtFormattedDate,
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )

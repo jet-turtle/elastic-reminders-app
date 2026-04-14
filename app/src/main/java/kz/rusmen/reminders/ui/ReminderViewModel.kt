@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import kz.rusmen.reminders.ReminderApplication
 import kz.rusmen.reminders.data.repository.ReminderDbRepository
 import kz.rusmen.reminders.data.repository.ReminderWorkerRepository
+import java.util.concurrent.TimeUnit
 
 class ReminderViewModel(
     private val reminderWorkerRepository: ReminderWorkerRepository,
@@ -79,7 +80,13 @@ class ReminderViewModel(
     fun scheduleReminder(reminderUiState: ReminderUiState) {
         viewModelScope.launch {
             val now = System.currentTimeMillis()
-            val reminder = reminderUiState.copy(createdAt = now).toReminder()
+            val durationMs = TimeUnit.valueOf(reminderUiState.timeType.name).toMillis(reminderUiState.duration.toLongOrNull() ?: 0L)
+
+            val reminder = reminderUiState.toReminder().copy(
+                createdAt = now,
+                nextRunAt = now + durationMs // Первый запуск через X времени от создания
+            )
+
             val generatedId = reminderDbRepository.insertReminder(reminder)
             val finalReminder = reminder.copy(id = generatedId.toInt())
 

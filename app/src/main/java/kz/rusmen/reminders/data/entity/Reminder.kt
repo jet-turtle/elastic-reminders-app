@@ -16,5 +16,7 @@ data class Reminder(
     @ColumnInfo(name = "is_periodic")
     val isPeriodic: Boolean,
     @ColumnInfo(name = "created_at")
-    val createdAt: Long
+    val createdAt: Long,
+    @ColumnInfo(name = "next_run_at")
+    val nextRunAt: Long
 )

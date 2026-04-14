@@ -17,7 +17,9 @@ data class ReminderUiState(
     val isPeriodic: Boolean = false,
     val status: String = "",
     val createdAt: Long = System.currentTimeMillis(),
-    val formattedDate: String = ""
+    val nextRunAt: Long = createdAt + (duration.toLongOrNull() ?: 0L),
+    val createdAtFormattedDate: String = "",
+    val nextRunAtFormattedDate: String = ""
 )
 
 enum class TimeType(val title: String) {
@@ -35,7 +37,9 @@ fun Reminder.toReminderUiState(): ReminderUiState = ReminderUiState(
     timeType = TimeType.entries.find { it.name == timeUnit } ?: TimeType.MINUTES,
     isPeriodic = isPeriodic,
     createdAt = createdAt,
-    formattedDate = createdAt.toFormattedDateTime()
+    nextRunAt = nextRunAt,
+    createdAtFormattedDate = createdAt.toFormattedDateTime(),
+    nextRunAtFormattedDate = nextRunAt.toFormattedDateTime()
 )
 
 fun ReminderUiState.toReminder(): Reminder = Reminder(
@@ -45,7 +49,8 @@ fun ReminderUiState.toReminder(): Reminder = Reminder(
     duration = duration.toLongOrNull() ?: 0L,
     timeUnit = timeType.name,
     isPeriodic = isPeriodic,
-    createdAt = createdAt
+    createdAt = createdAt,
+    nextRunAt = createdAt + (duration.toLongOrNull() ?: 0L)
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
