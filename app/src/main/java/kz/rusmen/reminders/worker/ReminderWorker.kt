@@ -7,8 +7,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.flow.first
 import kz.rusmen.reminders.ReminderApplication
-import kz.rusmen.reminders.data.repository.ReminderDbRepository
-import kz.rusmen.reminders.data.repository.ReminderWorkerRepository
 import java.util.concurrent.TimeUnit
 
 class ReminderWorker(
@@ -32,8 +30,8 @@ class ReminderWorker(
         val reminder = reminderFlow.first() ?: return Result.failure()
 
         makeReminderNotification(
-            title = reminder.title ?: "",
-            message = reminder.message ?: "",
+            title = reminder.title,
+            message = reminder.message,
             applicationContext
         )
 
