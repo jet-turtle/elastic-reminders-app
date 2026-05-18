@@ -322,8 +322,7 @@ fun ReminderCard(
     onScheduleReminder: () -> Unit
 ) {
     Card(
-        modifier = modifier
-            .padding(16.dp),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
