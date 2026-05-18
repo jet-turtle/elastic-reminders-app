@@ -9,16 +9,25 @@ A modern Android application for task management with smart, flexible reminders.
 
 ## ✨ Key Features
 * **Custom Reminders**: Create tasks with detailed titles, descriptions, and precise timing.
-* **Flexible Scheduling**: Set one-time or periodic reminders (intervals in minutes, hours, or days).
+* **Flexible Scheduling**: Set one-time or periodic reminders. (intervals in minutes, hours, or days).
+* **High-Precision Periodic Tasks**: Custom scheduling logic prevents "time drift." Reminders stay synced to their original schedule regardless of system delays.
+* **No Interval Limits**: Unlike standard Android implementations, reminders can be set for any duration, even less than 15 minutes.
 * **Reliable Delivery**: Powered by **WorkManager** to ensure reminders trigger even after device reboots.
 * **Offline-First**: All data is stored locally using **Room**, ensuring 100% availability.
+
+## 🧠 Intelligent Scheduling
+The app uses a "catch-up" algorithm for periodic reminders. Instead of scheduling the next task from the current execution time, it calculates the next occurrence based on the original anchor timestamp:
+
+$$NextRun = LastScheduledTime + (n \times Interval)$$
+
+This ensures that the reminder interval remains constant over weeks or months, avoiding the accumulation of small timing errors (drifting).
 
 ## 🛠 Tech Stack
 * **Language**: Kotlin
 * **UI**: Jetpack Compose (Modern Declarative UI)
 * **Architecture**: MVVM (Model-View-ViewModel)
 * **Database**: Room (Local persistence)
-* **Background Tasks**: WorkManager (Job scheduling)
+* **Background Tasks**: WorkManager (Recursive OneTimeWorkRequest for high-precision timing)
 * **Concurrency**: Coroutines & Flow
 
 ## 🏗 Project Structure
