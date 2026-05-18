@@ -18,9 +18,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
@@ -139,18 +141,27 @@ fun ReminderApp(
                 properties = DialogProperties(usePlatformDefaultWidth = false), // Чтобы карточка красиво ложилась по ширине
                 confirmButton = {}, // Оставляем пустым, так как кнопка "Старт" уже есть внутри ReminderCard
                 text = {
-                    ReminderCard(
-                        uiState = uiState,
-                        onTitleInputChange = { reminderViewModel.updateTextField(Field.TITLE, it) },
-                        onMessageInputChange = { reminderViewModel.updateTextField(Field.MESSAGE, it) },
-                        onDurationInputChange = { reminderViewModel.updateTextField(Field.DURATION, it) },
-                        onTimeTypeChange = { reminderViewModel.updateTimeType(it) },
-                        onPeriodicChange = { reminderViewModel.updatePeriodic(it) },
-                        onScheduleReminder = {
-                            reminderViewModel.scheduleReminder(uiState)
-                            showCreateDialog = false // Закрываем окно после создания
-                        }
-                    )
+                    val scrollState = rememberScrollState()
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
+                            .verticalScroll(scrollState)
+                    ) {
+                        ReminderCard(
+                            uiState = uiState,
+                            onTitleInputChange = { reminderViewModel.updateTextField(Field.TITLE, it) },
+                            onMessageInputChange = { reminderViewModel.updateTextField(Field.MESSAGE, it) },
+                            onDurationInputChange = { reminderViewModel.updateTextField(Field.DURATION, it) },
+                            onTimeTypeChange = { reminderViewModel.updateTimeType(it) },
+                            onPeriodicChange = { reminderViewModel.updatePeriodic(it) },
+                            onScheduleReminder = {
+                                reminderViewModel.scheduleReminder(uiState)
+                                showCreateDialog = false // Закрываем окно после создания
+                            }
+                        )
+                    }
                 },
                 containerColor = Color.Transparent // Чтобы не было двойного фона вокруг Card
             )
