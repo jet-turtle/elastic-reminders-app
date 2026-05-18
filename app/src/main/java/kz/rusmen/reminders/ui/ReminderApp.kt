@@ -3,10 +3,13 @@ package kz.rusmen.reminders.ui
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -19,13 +22,16 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +44,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -51,6 +60,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kz.rusmen.reminders.R
@@ -103,49 +113,74 @@ fun ReminderApp(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by reminderViewModel.uiState.collectAsStateWithLifecycle()
     val allReminders by reminderViewModel.allReminders.collectAsStateWithLifecycle()
+    var showCreateDialog by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { RemindersTopAppBar(scrollBehavior = scrollBehavior) },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            item {
-                ReminderCard(
-                    uiState = uiState,
-                    onTitleInputChange = { newValue ->
-                        reminderViewModel.updateTextField(Field.TITLE, newValue)
-                    },
-                    onMessageInputChange = { newValue ->
-                        reminderViewModel.updateTextField(Field.MESSAGE, newValue)
-                    },
-                    onDurationInputChange = { newValue ->
-                        reminderViewModel.updateTextField(Field.DURATION, newValue)
-                    },
-                    onTimeTypeChange = { newValue ->
-                        reminderViewModel.updateTimeType(newValue)
-                    },
-                    onPeriodicChange = { newValue ->
-                        reminderViewModel.updatePeriodic(newValue)
-                    },
-                    onScheduleReminder = { reminderViewModel.scheduleReminder(uiState) }
-                )
-            }
-            item {
-                Text(
-                    "Active reminders:",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
+        containerColor = MaterialTheme.colorScheme.background,
 
-            items(allReminders) { reminder ->
-                ActiveReminderItem(
-                    reminder = reminder,
-                    onCancel = { reminderViewModel.cancelReminder(reminder) }
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showCreateDialog = true },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add reminder"
                 )
+            }
+        }
+    ) { innerPadding ->
+        if (showCreateDialog) {
+            AlertDialog(
+                onDismissRequest = { showCreateDialog = false },
+                properties = DialogProperties(usePlatformDefaultWidth = false), // Чтобы карточка красиво ложилась по ширине
+                confirmButton = {}, // Оставляем пустым, так как кнопка "Старт" уже есть внутри ReminderCard
+                text = {
+                    ReminderCard(
+                        uiState = uiState,
+                        onTitleInputChange = { reminderViewModel.updateTextField(Field.TITLE, it) },
+                        onMessageInputChange = { reminderViewModel.updateTextField(Field.MESSAGE, it) },
+                        onDurationInputChange = { reminderViewModel.updateTextField(Field.DURATION, it) },
+                        onTimeTypeChange = { reminderViewModel.updateTimeType(it) },
+                        onPeriodicChange = { reminderViewModel.updatePeriodic(it) },
+                        onScheduleReminder = {
+                            reminderViewModel.scheduleReminder(uiState)
+                            showCreateDialog = false // Закрываем окно после создания
+                        }
+                    )
+                },
+                containerColor = Color.Transparent // Чтобы не было двойного фона вокруг Card
+            )
+        }
+
+        if (allReminders.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No active reminders yet.\nTap '+' to create one.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(vertical = 8.dp) // Небольшой отступ сверху/снизу для списка
+            ) {
+                items(allReminders) { reminder ->
+                    ActiveReminderItem(
+                        reminder = reminder,
+                        onCancel = { reminderViewModel.cancelReminder(reminder) }
+                    )
+                }
             }
         }
     }

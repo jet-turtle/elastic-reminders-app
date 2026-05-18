@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 
 private val LightColorScheme = lightColorScheme(
     primary = DarkOrange,      // Оранжевый Elastic
+    primaryContainer = LightOrange,
     secondary = Green,
     onPrimary = Color.White,          // Текст на оранжевом
     surface = Color(0xFFFFFFFF),      // Чистый белый для AppBar
@@ -24,6 +25,7 @@ private val LightColorScheme = lightColorScheme(
 
 private val DarkColorScheme = darkColorScheme(
     primary = DarkOrange,      // Тот же оранжевый (или чуть светлее)
+    primaryContainer = DarkerOrange,
     secondary = Green,
     onPrimary = Color.Black,          // На темной теме текст на оранжевом может быть черным
     surface = Color(0xFF1E1E1E),      // Темный AppBar
